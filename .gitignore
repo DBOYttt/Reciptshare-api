@@ -1,0 +1,350 @@
+# Environment Variables & Configuration
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+config/local.js
+config/production.js
+
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+.pnpm-debug.log*
+
+# Runtime & Build
+dist/
+build/
+.cache/
+.parcel-cache/
+.next/
+out/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+*.lcov
+.nyc_output
+
+# ESLint cache
+.eslintcache
+
+# Optional npm cache directory
+.npm
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# Temporary folders
+tmp/
+temp/
+.tmp/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+database.db
+db.sqlite3
+
+# Database dumps and backups
+*.sql
+*.dump
+database_backup_*
+backup_*
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Testing
+test-results/
+coverage/
+.nyc_output/
+junit.xml
+test-output/
+
+# Jest
+jest_cache/
+
+# Mocha
+.mocha_opts
+
+# Static files and uploads
+uploads/
+public/uploads/
+static/uploads/
+files/
+images/
+assets/temp/
+
+# SSL Certificates
+*.pem
+*.key
+*.crt
+*.cert
+*.p12
+*.pfx
+ssl/
+
+# Security keys
+*.key
+private_key*
+public_key*
+keys/
+secrets/
+
+# API Documentation (if generated)
+api-docs/
+docs/generated/
+
+# Monitoring and metrics
+monitoring/
+metrics/
+newrelic_agent.log
+.newrelic.yml
+
+# Docker
+Dockerfile.dev
+docker-compose.override.yml
+.dockerignore
+
+# Kubernetes
+k8s/secrets/
+*.kubeconfig
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+
+# Cloud deployment
+.serverless/
+.netlify/
+.vercel/
+
+# PM2
+ecosystem.config.js
+.pm2/
+
+# Cache directories
+.cache/
+.eslintcache
+.stylelintcache
+
+# Optional REPL history
+.node_repl_history
+
+# Output of 'npm pack'
+*.tgz
+
+# Yarn Integrity file
+.yarn-integrity
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Microbundle cache
+.rpt2_cache/
+.rts2_cache_cjs/
+.rts2_cache_es/
+.rts2_cache_umd/
+
+# Optional REPL history
+.node_repl_history
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# Email templates (if using compiled templates)
+email-templates/compiled/
+
+# Backup files
+*.backup
+*.bak
+*.old
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Archive files
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# AWS
+.aws/
+
+# Google Cloud
+.gcloud/
+service-account-key.json
+gcp-key.json
+
+# Azure
+.azure/
+
+# Heroku
+.heroku/
+
+# Firebase
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+
+# Redis dump file
+dump.rdb
+
+# PostgreSQL
+*.psql
+
+# MySQL
+*.mysql
+
+# SQLite
+*.sqlite
+*.db
+
+# Local development tools
+.vscode/launch.json
+.vscode/settings.json
+local_config.json
+
+# Storybook build outputs
+storybook-static
+
+# Application specific
+recipe-images/
+user-avatars/
+temp-files/
+import-export/
+
+# Recipe image uploads
+public/recipe-images/
+uploads/recipes/
+static/images/recipes/
+
+# User profile images  
+public/user-avatars/
+uploads/users/
+static/images/users/
+
+# Shopping list exports
+exports/shopping-lists/
+
+# Recipe exports/imports
+exports/recipes/
+imports/recipes/
+
+# Analytics data
+analytics/
+reports/
+
+# Email templates (compiled)
+templates/compiled/
+
+# Migration backups
+migrations/backup/
+
+# Test database
+test.db
+test_database.sql
+
+# Performance logs
+performance.log
+query.log
+
+# Authentication test files
+test-tokens.json
+test-users.json
+
+# Recipe test data
+test-recipes.json
+sample-data/
+
+# Development utilities
+dev-utils/
+scripts/local/
