@@ -3,6 +3,42 @@ const { body, query } = require('express-validator');
 // Shopping list item validation
 const validateShoppingListItem = [
   body('ingredientName')
+    .optional()
+    .isLength({ min: 1, max: 255 })
+    .withMessage('Ingredient name must be between 1 and 255 characters')
+    .trim(),
+
+  body('quantity')
+    .optional()
+    .isFloat({ min: 0.01 })
+    .withMessage('Quantity must be a positive number'),
+
+  body('unit')
+    .optional()
+    .isLength({ max: 50 })
+    .withMessage('Unit must be less than 50 characters')
+    .trim(),
+
+  body('notes')
+    .optional()
+    .isLength({ max: 255 })
+    .withMessage('Notes must be less than 255 characters')
+    .trim(),
+
+  body('recipeId')
+    .optional()
+    .isLength({ min: 1 })
+    .withMessage('Recipe ID must be a valid string'),
+
+  body('isCompleted')
+    .optional()
+    .isBoolean()
+    .withMessage('isCompleted must be a boolean')
+];
+
+// Shopping list item creation validation (stricter)
+const validateShoppingListItemCreation = [
+  body('ingredientName')
     .isLength({ min: 1, max: 255 })
     .withMessage('Ingredient name is required and must be less than 255 characters')
     .trim(),
@@ -142,6 +178,7 @@ const validateAdvancedRecipeSearch = [
 
 module.exports = {
   validateShoppingListItem,
+  validateShoppingListItemCreation,
   validateAddRecipeToShoppingList,
   validateShoppingListQuery,
   validateSearch,

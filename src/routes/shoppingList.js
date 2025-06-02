@@ -10,6 +10,7 @@ const {
 } = require('../controllers/shoppingListController');
 const { 
   validateShoppingListItem,
+  validateShoppingListItemCreation,
   validateAddRecipeToShoppingList,
   validateShoppingListQuery
 } = require('../middleware/shoppingListValidation');
@@ -19,7 +20,7 @@ const router = express.Router();
 
 // All shopping list routes require authentication
 router.get('/', authenticateToken, validateShoppingListQuery, getShoppingList);
-router.post('/items', authenticateToken, validateShoppingListItem, addShoppingListItem);
+router.post('/items', authenticateToken, validateShoppingListItemCreation, addShoppingListItem);
 router.post('/recipes/:id', authenticateToken, validateAddRecipeToShoppingList, addRecipeToShoppingList);
 router.put('/items/:itemId', authenticateToken, validateShoppingListItem, updateShoppingListItem);
 router.delete('/items/:itemId', authenticateToken, deleteShoppingListItem);

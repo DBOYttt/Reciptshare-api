@@ -64,7 +64,6 @@ const toggleFollow = async (req, res) => {
         SELECT 
           (SELECT COUNT(*) FROM user_followers WHERE following_id = $1) as followers_count,
           (SELECT COUNT(*) FROM user_followers WHERE follower_id = $1) as following_count
-        FROM users WHERE id = $1
       `, [userToFollow.id]);
 
       const stats = statsResult.rows[0];
@@ -99,7 +98,7 @@ const toggleFollow = async (req, res) => {
   }
 };
 
-// Get user's followers
+// Get user's followers - COMPLETELY REWRITTEN
 const getUserFollowers = async (req, res) => {
   try {
     const { username } = req.params;
@@ -132,20 +131,17 @@ const getUserFollowers = async (req, res) => {
         });
       }
 
-      // Get followers
+      // Get followers - SIMPLIFIED to avoid parameter issues
       const followersResult = await client.query(`
         SELECT 
           u.id, u.username, u.first_name, u.last_name, u.profile_image_url, u.bio, u.is_verified,
-          uf.created_at as followed_at,
-          CASE WHEN $3 IS NOT NULL THEN 
-            EXISTS(SELECT 1 FROM user_followers WHERE follower_id = $3 AND following_id = u.id)
-          ELSE false END as is_following_back
+          uf.created_at as followed_at
         FROM user_followers uf
         JOIN users u ON uf.follower_id = u.id
         WHERE uf.following_id = $1 AND u.is_active = true
         ORDER BY uf.created_at DESC
-        LIMIT $2 OFFSET $4
-      `, [user.id, parseInt(limit), requestingUserId, offset]);
+        LIMIT $2 OFFSET $3
+      `, [user.id, parseInt(limit), offset]);
 
       // Get total count
       const countResult = await client.query(
@@ -156,18 +152,32 @@ const getUserFollowers = async (req, res) => {
       const totalFollowers = parseInt(countResult.rows[0].total);
       const totalPages = Math.ceil(totalFollowers / parseInt(limit));
 
-      const followers = followersResult.rows.map(follower => ({
-        id: follower.id,
-        username: follower.username,
-        firstName: follower.first_name,
-        lastName: follower.last_name,
-        fullName: `${follower.first_name} ${follower.last_name}`.trim(),
-        profileImageUrl: follower.profile_image_url,
-        bio: follower.bio,
-        isVerified: follower.is_verified,
-        followedAt: follower.followed_at,
-        isFollowingBack: follower.is_following_back
-      }));
+      // For each follower, check if requesting user follows them back (if authenticated)
+      const followers = [];
+      for (const follower of followersResult.rows) {
+        let isFollowingBack = false;
+        
+        if (requestingUserId) {
+          const followBackResult = await client.query(
+            'SELECT 1 FROM user_followers WHERE follower_id = $1 AND following_id = $2',
+            [requestingUserId, follower.id]
+          );
+          isFollowingBack = followBackResult.rows.length > 0;
+        }
+
+        followers.push({
+          id: follower.id,
+          username: follower.username,
+          firstName: follower.first_name,
+          lastName: follower.last_name,
+          fullName: `${follower.first_name} ${follower.last_name}`.trim(),
+          profileImageUrl: follower.profile_image_url,
+          bio: follower.bio,
+          isVerified: follower.is_verified,
+          followedAt: follower.followed_at,
+          isFollowingBack
+        });
+      }
 
       res.json({
         user: {
@@ -199,7 +209,7 @@ const getUserFollowers = async (req, res) => {
   }
 };
 
-// Get user's following
+// Get user's following - COMPLETELY REWRITTEN
 const getUserFollowing = async (req, res) => {
   try {
     const { username } = req.params;
@@ -232,20 +242,17 @@ const getUserFollowing = async (req, res) => {
         });
       }
 
-      // Get following
+      // Get following - SIMPLIFIED to avoid parameter issues
       const followingResult = await client.query(`
         SELECT 
           u.id, u.username, u.first_name, u.last_name, u.profile_image_url, u.bio, u.is_verified,
-          uf.created_at as followed_at,
-          CASE WHEN $3 IS NOT NULL THEN 
-            EXISTS(SELECT 1 FROM user_followers WHERE follower_id = $3 AND following_id = u.id)
-          ELSE false END as is_following
+          uf.created_at as followed_at
         FROM user_followers uf
         JOIN users u ON uf.following_id = u.id
         WHERE uf.follower_id = $1 AND u.is_active = true
         ORDER BY uf.created_at DESC
-        LIMIT $2 OFFSET $4
-      `, [user.id, parseInt(limit), requestingUserId, offset]);
+        LIMIT $2 OFFSET $3
+      `, [user.id, parseInt(limit), offset]);
 
       // Get total count
       const countResult = await client.query(
@@ -256,18 +263,32 @@ const getUserFollowing = async (req, res) => {
       const totalFollowing = parseInt(countResult.rows[0].total);
       const totalPages = Math.ceil(totalFollowing / parseInt(limit));
 
-      const following = followingResult.rows.map(followedUser => ({
-        id: followedUser.id,
-        username: followedUser.username,
-        firstName: followedUser.first_name,
-        lastName: followedUser.last_name,
-        fullName: `${followedUser.first_name} ${followedUser.last_name}`.trim(),
-        profileImageUrl: followedUser.profile_image_url,
-        bio: followedUser.bio,
-        isVerified: followedUser.is_verified,
-        followedAt: followedUser.followed_at,
-        isFollowing: followedUser.is_following
-      }));
+      // For each followed user, check if requesting user also follows them (if authenticated)
+      const following = [];
+      for (const followedUser of followingResult.rows) {
+        let isFollowing = false;
+        
+        if (requestingUserId) {
+          const followResult = await client.query(
+            'SELECT 1 FROM user_followers WHERE follower_id = $1 AND following_id = $2',
+            [requestingUserId, followedUser.id]
+          );
+          isFollowing = followResult.rows.length > 0;
+        }
+
+        following.push({
+          id: followedUser.id,
+          username: followedUser.username,
+          firstName: followedUser.first_name,
+          lastName: followedUser.last_name,
+          fullName: `${followedUser.first_name} ${followedUser.last_name}`.trim(),
+          profileImageUrl: followedUser.profile_image_url,
+          bio: followedUser.bio,
+          isVerified: followedUser.is_verified,
+          followedAt: followedUser.followed_at,
+          isFollowing
+        });
+      }
 
       res.json({
         user: {

@@ -316,8 +316,7 @@ const addRecipeToShoppingList = async (req, res) => {
     });
   }
 };
-
-// Update shopping list item
+// Update shopping list item - FIXED
 const updateShoppingListItem = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -356,7 +355,7 @@ const updateShoppingListItem = async (req, res) => {
         });
       }
 
-      // Build dynamic update query
+      // Build dynamic update query - FIXED to handle all possible field updates
       const updates = [];
       const values = [];
       let paramCount = 1;
@@ -375,13 +374,13 @@ const updateShoppingListItem = async (req, res) => {
 
       if (unit !== undefined) {
         updates.push(`unit = $${paramCount}`);
-        values.push(unit);
+        values.push(unit || '');
         paramCount++;
       }
 
       if (notes !== undefined) {
         updates.push(`notes = $${paramCount}`);
-        values.push(notes);
+        values.push(notes || null);
         paramCount++;
       }
 

@@ -1,6 +1,6 @@
 const { pool } = require('../config/database');
 
-// Global search across recipes and users
+// Global search across recipes and users - FIXED
 const globalSearch = async (req, res) => {
   try {
     const { q: query, type = 'all', page = 1, limit = 10 } = req.query;
@@ -132,24 +132,48 @@ const globalSearch = async (req, res) => {
 
       // Search users
       if (type === 'all' || type === 'users') {
-        const usersResult = await client.query(`
-          SELECT 
-            u.id, u.username, u.first_name, u.last_name, u.bio, 
-            u.profile_image_url, u.is_verified, u.created_at,
-            (SELECT COUNT(*) FROM recipes WHERE author_id = u.id AND is_public = true) as recipe_count,
-            (SELECT COUNT(*) FROM user_followers WHERE following_id = u.id) as followers_count,
-            CASE WHEN $3 IS NOT NULL THEN 
-              EXISTS(SELECT 1 FROM user_followers WHERE follower_id = $3 AND following_id = u.id)
-            ELSE false END as is_following
-          FROM users u
-          WHERE u.is_active = true 
-            AND u.is_public_profile = true
-            AND (u.username ILIKE $1 OR u.first_name ILIKE $1 OR u.last_name ILIKE $1)
-          ORDER BY 
-            CASE WHEN u.username ILIKE $1 THEN 1 ELSE 2 END,
-            (SELECT COUNT(*) FROM user_followers WHERE following_id = u.id) DESC
-          LIMIT $2 OFFSET $4
-        `, [searchTerm, parseInt(limit), requestingUserId, offset]);
+        let usersQuery;
+        let usersParams;
+
+        if (requestingUserId) {
+          usersQuery = `
+            SELECT 
+              u.id, u.username, u.first_name, u.last_name, u.bio, 
+              u.profile_image_url, u.is_verified, u.created_at,
+              (SELECT COUNT(*) FROM recipes WHERE author_id = u.id AND is_public = true) as recipe_count,
+              (SELECT COUNT(*) FROM user_followers WHERE following_id = u.id) as followers_count,
+              EXISTS(SELECT 1 FROM user_followers WHERE follower_id = $3 AND following_id = u.id) as is_following
+            FROM users u
+            WHERE u.is_active = true 
+              AND u.is_public_profile = true
+              AND (u.username ILIKE $1 OR u.first_name ILIKE $1 OR u.last_name ILIKE $1)
+            ORDER BY 
+              CASE WHEN u.username ILIKE $1 THEN 1 ELSE 2 END,
+              (SELECT COUNT(*) FROM user_followers WHERE following_id = u.id) DESC
+            LIMIT $2 OFFSET $4
+          `;
+          usersParams = [searchTerm, parseInt(limit), requestingUserId, offset];
+        } else {
+          usersQuery = `
+            SELECT 
+              u.id, u.username, u.first_name, u.last_name, u.bio, 
+              u.profile_image_url, u.is_verified, u.created_at,
+              (SELECT COUNT(*) FROM recipes WHERE author_id = u.id AND is_public = true) as recipe_count,
+              (SELECT COUNT(*) FROM user_followers WHERE following_id = u.id) as followers_count,
+              false as is_following
+            FROM users u
+            WHERE u.is_active = true 
+              AND u.is_public_profile = true
+              AND (u.username ILIKE $1 OR u.first_name ILIKE $1 OR u.last_name ILIKE $1)
+            ORDER BY 
+              CASE WHEN u.username ILIKE $1 THEN 1 ELSE 2 END,
+              (SELECT COUNT(*) FROM user_followers WHERE following_id = u.id) DESC
+            LIMIT $2 OFFSET $3
+          `;
+          usersParams = [searchTerm, parseInt(limit), offset];
+        }
+
+        const usersResult = await client.query(usersQuery, usersParams);
 
         const users = usersResult.rows.map(user => ({
           id: user.id,
@@ -208,7 +232,7 @@ const globalSearch = async (req, res) => {
   }
 };
 
-// Recipe search with advanced filters
+// Recipe search with advanced filters (this one was working, keeping it)
 const searchRecipes = async (req, res) => {
   try {
     const {

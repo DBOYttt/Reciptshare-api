@@ -36,7 +36,7 @@ const validateCommentQuery = [
     .withMessage('Order must be asc or desc')
 ];
 
-// Follow query validation
+// Follow query validation (FIXED - this was missing)
 const validateFollowQuery = [
   query('page')
     .optional()
